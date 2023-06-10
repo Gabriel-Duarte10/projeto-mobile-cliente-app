@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="projeto_mobile_cliente_app.Views.App.Agendamento.AgendamentoView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:projeto_mobile_cliente_app.Libraries.Converters"
+    NavigationPage.HasNavigationBar="False">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:EqualityToBooleanConverter x:Key="EqualityToBooleanConverter" />
+            <converters:DataStringCriacao x:Key="DataStringCriacao" />
+            <converters:ColorStatusBorderTransacao x:Key="ColorStatusBorderTransacao" />
+            <converters:TextStatusAgendamento x:Key="TextStatusAgendamento" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ScrollView
+        Padding="20"
+        BackgroundColor="White"
+        VerticalOptions="FillAndExpand">
+        <VerticalStackLayout>
+            <StackLayout
+                Margin="0,30,0,0"
+                HorizontalOptions="Start"
+                Orientation="Horizontal">
+                <Image
+                    Margin="0,0,10,0"
+                    HeightRequest="24"
+                    Source="calendarblack.png"
+                    WidthRequest="24" />
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="22"
+                    Text="Agendamentos"
+                    VerticalOptions="Center" />
+            </StackLayout>
+            <Button
+                Margin="0,20,0,0"
+                BackgroundColor="Transparent"
+                Clicked="CriarAgendamento"
+                FontSize="16"
+                HorizontalOptions="Start"
+                ImageSource="pluspurple.png"
+                Text="Criar agendamentos"
+                TextColor="#8F00FF" />
+            <StackLayout Margin="0,20,0,0">
+                <Border Padding="15,5,5,5" BackgroundColor="Transparent">
+                    <Grid>
+                        <Picker
+                            x:Name="selectStatus"
+                            HorizontalOptions="FillAndExpand"
+                            SelectedIndexChanged="FiltroStatus">
+                            <Picker.ItemsSource>
+                                <x:Array Type="{x:Type x:String}">
+                                    <x:String>Todos</x:String>
+                                    <x:String>Pendentes</x:String>
+                                    <x:String>Aprovados</x:String>
+                                    <x:String>Cancelados</x:String>
+                                </x:Array>
+                            </Picker.ItemsSource>
+                        </Picker>
+                        <Image
+                            Margin="0,0,10,0"
+                            HorizontalOptions="End"
+                            Source="arrowdown.png"
+                            VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+                <Border Margin="0,10,0,0">
+                    <StackLayout
+                        Margin="15,0,15,0"
+                        Orientation="Horizontal"
+                        VerticalOptions="Center">
+                        <Image
+                            HeightRequest="20"
+                            Source="searchwhite.png"
+                            VerticalOptions="Center" />
+                        <Entry
+                            x:Name="FilterEntry"
+                            Margin="12,0,0,0"
+                            HeightRequest="55"
+                            Placeholder="Pesquise pelo Nome"
+                            Text="{Binding FilterText, Mode=TwoWay}"
+                            WidthRequest="400" />
+                    </StackLayout>
+                </Border>
+            </StackLayout>
+            <CollectionView
+                x:Name="ClienteCollectionView"
+                Margin="0,15,0,0"
+                ItemsSource="{Binding ListTransacao}">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="1" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout Padding="5,5,5,5" Spacing="0">
+                            <Border
+                                BackgroundColor="{Binding ., Converter={StaticResource ColorStatusBorderTransacao}}"
+                                HeightRequest="110"
+                                StrokeShape="RoundRectangle 18,18,18,18">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="1" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--  Content for the left side  -->
+                                    <StackLayout
+                                        Grid.Column="0"
+                                        Margin="15,0,15,0"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center">
+                                        <HorizontalStackLayout>
+                                            <Image
+                                                Margin="0,0,10,0"
+                                                HeightRequest="18"
+                                                HorizontalOptions="Start"
+                                                Source="gotaarrow.png"
+                                                VerticalOptions="Center" />
+                                            <Label
+                                                HorizontalOptions="Center"
+                                                Text="{Binding Posto.Nome}"
+                                                TextColor="White"
+                                                VerticalOptions="Center" />
+                                        </HorizontalStackLayout>
+                                    </StackLayout>
+
+                                    <!--  Vertical line in the middle  -->
+                                    <BoxView Grid.Column="1" BackgroundColor="White" />
+
+                                    <!--  Content for the right side  -->
+                                    <Image
+                                        Margin="0,0,0,0"
+                                        HeightRequest="18"
+                                        HorizontalOptions="End"
+                                        Source="closewhite.png"
+                                        VerticalOptions="Start" />
+
+                                    <Label
+                                        FontAttributes="Bold"
+                                        FontSize="12"
+                                        HorizontalOptions="Center"
+                                        Text="{Binding CodigoTransacao, StringFormat='Código: {0}'}"
+                                        TextColor="White"
+                                        VerticalOptions="Center" />
+                                </Grid>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer CommandParameter="{Binding}" Tapped="AbrirAgendamento" />
+                                </Border.GestureRecognizers>
+                            </Border>
+
+                            <Grid Margin="10,10,10,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="150" />
+                                </Grid.ColumnDefinitions>
+                                <Label
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Margin="0,3,0,0"
+                                    FontSize="13"
+                                    HorizontalOptions="Start"
+                                    Text="{Binding dataAgendada, Converter={StaticResource DataStringCriacao}}"
+                                    TextColor="#686868"
+                                    VerticalOptions="Center" />
+                                <Label
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Margin="0,3,0,0"
+                                    FontSize="13"
+                                    HorizontalOptions="End"
+                                    Text="{Binding ., Converter={StaticResource TextStatusAgendamento}}"
+                                    TextColor="#686868"
+                                    VerticalOptions="Center" />
+                            </Grid>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+
+            <Label
+                FontSize="16"
+                HorizontalOptions="Center"
+                IsVisible="{Binding ListTransacao, Converter={StaticResource EqualityToBooleanConverter}}"
+                Text="Não existe agendamentos"
+                TextColor="Black"
+                VerticalOptions="Center" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
