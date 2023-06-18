@@ -74,6 +74,9 @@
 	  <MauiXaml Update="Views\App\Agendamento\CriarAgendamentoPopup.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\App\Agendamento\VisualizarAgendamento.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\App\AppView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

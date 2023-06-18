@@ -359,8 +359,8 @@ public partial class AgendamentoView : ContentPage, INotifyPropertyChanged
         var TransacaoCliente = (TransacaoClienteDto)e.Parameter;
         MainThread.BeginInvokeOnMainThread(async () =>
         {
-            var popupPage = new CriarAgendamentoPopup(TransacaoCliente);
-            popupPage.Size = new Size(350, 530);
+            var popupPage = new VisualizarAgendamento(TransacaoCliente);
+            popupPage.Size = new Size(350, 500);
             await Application.Current.MainPage.ShowPopupAsync(popupPage);
         });
     }
