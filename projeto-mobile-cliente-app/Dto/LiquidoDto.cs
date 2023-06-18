@@ -11,5 +11,6 @@ namespace projeto_mobile_cliente_app.Dto
         public int? Id { get; set; }
         public string Nome { get; set; }
         public double ValorUnitario { get; set; }
+        public bool IsSelected { get; set; }
     }
 }

@@ -6,51 +6,67 @@ using System.Runtime.CompilerServices;
 
 namespace projeto_mobile_cliente_app.Views.App.Agendamento;
 
-public partial class AgendamentoView : ContentPage, INotifyPropertyChanged
+public partial class CriarAgendamentoPopup : Popup, INotifyPropertyChanged
 {
-    private ObservableCollection<TransacaoClienteDto> _listTransacao;
-    private ObservableCollection<TransacaoClienteDto> _originalListTransacao;
-    public ObservableCollection<TransacaoClienteDto> ListTransacao
+    public event PropertyChangedEventHandler PropertyChanged;
+    public TransacaoClienteDto TransacaoCliente { get; set; }
+
+    private List<PostoDto> _listPosto;
+    private List<LiquidoDto> _listLiquido;
+    public List<PostoDto> Postos
     {
-        get { return _listTransacao; }
+        get { return _listPosto; }
         set
         {
-            if (_listTransacao != value)
-            {
-                _listTransacao = value;
-                OnPropertyChanged();
-            }
+            _listPosto = value;
+            OnPropertyChanged();
         }
     }
-    private string _filterText;
-    private CancellationTokenSource _cts = new CancellationTokenSource();
-    public string FilterText
+    private PostoDto _selectedPosto;
+    public PostoDto SelectedPosto
     {
-        get { return _filterText; }
+        get { return _selectedPosto; }
         set
         {
-            if (_filterText != value)
-            {
-                _filterText = value;
-                OnPropertyChanged();
-
-                _cts.Cancel(); // cancel any previous search
-                _cts = new CancellationTokenSource();
-
-                Task.Delay(500, _cts.Token) // delay for half a second
-                    .ContinueWith(
-                        t => PesquisaFiltroList(),
-                        CancellationToken.None,
-                        TaskContinuationOptions.OnlyOnRanToCompletion,
-                        TaskScheduler.FromCurrentSynchronizationContext());
-            }
+            _selectedPosto = value;
+            OnPropertyChanged();
         }
     }
-    public List<PostoDto> _originalListPosto { get; set; }
-    public AgendamentoView()
+    private DateTime _selectedDate = DateTime.Today;
+    public DateTime SelectedDate
+    {
+        get { return _selectedDate; }
+        set
+        {
+            _selectedDate = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private TimeSpan _selectedTime = DateTime.Now.TimeOfDay;
+    public TimeSpan SelectedTime
+    {
+        get { return _selectedTime; }
+        set
+        {
+            _selectedTime = value;
+            OnPropertyChanged();
+        }
+    }
+    private ObservableCollection<TransacaoItemDto> _liquidosSelecionados;
+    public ObservableCollection<TransacaoItemDto> LiquidosSelecionados
+    {
+        get { return _liquidosSelecionados; }
+        set
+        {
+            _liquidosSelecionados = value;
+            OnPropertyChanged();
+        }
+    }
+    public CriarAgendamentoPopup(TransacaoClienteDto transacaoCliente)
 	{
 		InitializeComponent();
-        _originalListPosto = new List<PostoDto>
+        _listPosto = new List<PostoDto>
         {
             // Pendente
             new PostoDto
@@ -233,128 +249,82 @@ public partial class AgendamentoView : ContentPage, INotifyPropertyChanged
                 }
             }
         };
-        _originalListTransacao = new ObservableCollection<TransacaoClienteDto>
+        _listLiquido = new List<LiquidoDto>
         {
-            // Transacao pendente
-            new TransacaoClienteDto
-            {
-                Id = 1,
-                Status = StatusEnum.Pendente,
-                dataAgendada = DateTime.Now,
-                CodigoTransacao = "TR1",
-                Posto = _originalListPosto[0], // Aqui estou utilizando o primeiro posto da lista de postos criada anteriormente
-                TransacaoItem = new List<TransacaoItemDto>
-                {
-                    new TransacaoItemDto
-                    {
-                        QtdAgendada = 10,
-                        Liquido = _originalListPosto[0].LiquidosAceitos[0].Liquido // Aqui estou utilizando o primeiro liquido do primeiro posto da lista de postos criada anteriormente
-                    }
-                }
-            },
-            // Transacao aprovada
-            new TransacaoClienteDto
-            {
-                Id = 2,
-                Status = StatusEnum.Aprovado,
-                dataAgendada = DateTime.Now,
-                CodigoTransacao = "TR2",
-                Posto = _originalListPosto[1], // Aqui estou utilizando o segundo posto da lista de postos criada anteriormente
-                TransacaoItem = new List<TransacaoItemDto>
-                {
-                    new TransacaoItemDto
-                    {
-                        QtdAgendada = 20,
-                        Liquido = _originalListPosto[1].LiquidosAceitos[0].Liquido // Aqui estou utilizando o primeiro liquido do segundo posto da lista de postos criada anteriormente
-                    }
-                }
-            },
-            // Transacao cancelada
-            new TransacaoClienteDto
-            {
-                Id = 3,
-                Status = StatusEnum.Cancelado,
-                dataAgendada = DateTime.Now,
-                CodigoTransacao = "TR3",
-                Posto = _originalListPosto[2], // Aqui estou utilizando o terceiro posto da lista de postos criada anteriormente
-                TransacaoItem = new List<TransacaoItemDto>
-                {
-                    new TransacaoItemDto
-                    {
-                        QtdAgendada = 30,
-                        Liquido = _originalListPosto[2].LiquidosAceitos[0].Liquido // Aqui estou utilizando o primeiro liquido do terceiro posto da lista de postos criada anteriormente
-                    }
-                }
-            }
+            new LiquidoDto { Id = 1, Nome = "Liquido 1", ValorUnitario = 16.99 },
+            new LiquidoDto { Id = 2, Nome = "Liquido 2", ValorUnitario = 17.99 },
+            new LiquidoDto { Id = 3, Nome = "Liquido 3", ValorUnitario = 18.99 },
+            new LiquidoDto { Id = 4, Nome = "Liquido 4", ValorUnitario = 18.99 },
+            new LiquidoDto { Id = 5, Nome = "Liquido 5", ValorUnitario = 18.99 },
+            new LiquidoDto { Id = 6, Nome = "Liquido 6", ValorUnitario = 18.99 }
         };
-        ListTransacao = new ObservableCollection<TransacaoClienteDto>(_originalListTransacao);
-        selectStatus.SelectedIndex = 0;
-        BindingContext = this;
-    }
-
-    private void CriarAgendamento(object sender, EventArgs e)
-    {
-        MainThread.BeginInvokeOnMainThread(async () =>
+        LabelTitle.Text = "Criar Líquido";
+        TransacaoCliente = transacaoCliente;
+        LiquidosSelecionados = new ObservableCollection<TransacaoItemDto>();
+        if (TransacaoCliente != null)
         {
-            var popupPage = new CriarAgendamentoPopup(null);
-            popupPage.Size = new Size(350, 530);
-            await Application.Current.MainPage.ShowPopupAsync(popupPage);
-        });
-    }
-    void FiltroStatus(object sender, EventArgs e)
-    {
-        var picker = (Picker)sender;
-        int selectedIndex = picker.SelectedIndex;
-        
-        if (selectedIndex == 0)
-        {
-            ListTransacao = new ObservableCollection<TransacaoClienteDto>(_originalListTransacao);
-        }
-        if (selectedIndex == 1)
-        {
-            ListTransacao = new ObservableCollection<TransacaoClienteDto>(_originalListTransacao
-                    .Where(x => x.Status == StatusEnum.Pendente).ToList());
-        }
-        if (selectedIndex == 2)
-        {
-            ListTransacao = new ObservableCollection<TransacaoClienteDto>(_originalListTransacao
-                    .Where(x => x.Status == StatusEnum.Aprovado).ToList());
-        }
-        if (selectedIndex == 3)
-        {
-            ListTransacao = new ObservableCollection<TransacaoClienteDto>(_originalListTransacao
-                    .Where(x => x.Status == StatusEnum.Reprovado).ToList());
-        }
-        if (selectedIndex == 4)
-        {
-            ListTransacao = new ObservableCollection<TransacaoClienteDto>(_originalListTransacao
-                    .Where(x => x.Status == StatusEnum.Bloqueado).ToList());
-        }
-        OnPropertyChanged(nameof(ListTransacao));
-       
-    }
-    private void PesquisaFiltroList()
-    {
-        if (string.IsNullOrWhiteSpace(FilterText))
-        {
-            ListTransacao = new ObservableCollection<TransacaoClienteDto>(_originalListTransacao);
+            //LabelTitle.Text = "Editar Líquido";
         }
         else
         {
-            ListTransacao = new ObservableCollection<TransacaoClienteDto>(_originalListTransacao
-                .Where(l => l.Posto.Nome.Contains(FilterText, StringComparison.OrdinalIgnoreCase)).ToList());           
+            //LabelTitle.Text = "Criar Líquido";
         }
-        OnPropertyChanged(nameof(ListTransacao));
+        BindingContext = this;
     }
-    // Implementação de INotifyPropertyChanged.
-    public event PropertyChangedEventHandler PropertyChanged;
+    //private void CriarLiquido(object sender, EventArgs e)
+    //{
+    //    DateTime selectedDateTime = SelectedDate.Add(SelectedTime);
+    //    if (SelectedPosto != null)
+    //    {
+    //        Application.Current.MainPage.DisplayAlert("ID selecionado", $"O {SelectedPosto.Id} - {selectedDateTime}", "OK");
+    //    }
+    //}
+
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    private void AbrirAgendamento(object sender, TappedEventArgs e)
+    private void SelecionarLiquido(object sender, EventArgs e)
     {
+        var liquidoDisponivel = _listLiquido;
+        if (LiquidosSelecionados.Count() > 0)
+        {
+            var LiquidosSelecionadosIds = LiquidosSelecionados.Select(x => x.Liquido.Id).ToList();
+            liquidoDisponivel = _listLiquido.Where(x => !LiquidosSelecionadosIds.Contains(x.Id)).ToList();
+        }
 
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            var popupPage = new AdicionarLiquidoPopup(liquidoDisponivel);
+            popupPage.Size = new Size(350, 450);
+            popupPage.OnSaveClicked += (selectedLiquidos) =>
+            {
+                foreach (var item in selectedLiquidos)
+                {
+                    LiquidosSelecionados.Add(new TransacaoItemDto()
+                    {
+                        Liquido = item,
+                        QtdAgendada = 0
+                    });
+                }
+            };
+            await Application.Current.MainPage.ShowPopupAsync(popupPage);
+        });
+        
+    }
+
+    private void OnCancelButtonClicked(object sender, EventArgs e)
+    {
+        this.Close();
+    }
+
+    private void OnSaveButtonClicked(object sender, EventArgs e)
+    {
+        DateTime selectedDateTime = SelectedDate.Add(SelectedTime);
+        if (SelectedPosto != null)
+        {
+            Application.Current.MainPage.DisplayAlert("ID selecionado", $"O {LiquidosSelecionados[0].QtdAgendada} - {selectedDateTime}", "OK");
+        }
     }
 }

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    x:Class="projeto_mobile_cliente_app.Views.App.Agendamento.CriarAgendamentoPopup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui">
+    <ScrollView BackgroundColor="White">
+        <VerticalStackLayout Padding="10,10,10,10">
+            <Label
+                x:Name="LabelTitle"
+                Margin="0,20,0,10"
+                FontAttributes="Bold"
+                FontSize="18"
+                HorizontalOptions="CenterAndExpand" />
+            <Label
+                Margin="0,10,0,10"
+                FontAttributes="Bold"
+                FontSize="14"
+                HorizontalOptions="StartAndExpand"
+                Text="Posto" />
+            <Border Padding="15,5,5,5" BackgroundColor="Transparent">
+                <Grid>
+                    <Picker
+                        Title="Selecione o posto"
+                        ItemDisplayBinding="{Binding Nome}"
+                        ItemsSource="{Binding Postos}"
+                        SelectedItem="{Binding SelectedPosto}" />
+                    <Image
+                        Margin="0,0,10,0"
+                        HorizontalOptions="End"
+                        Source="arrowdown.png"
+                        VerticalOptions="Center" />
+                </Grid>
+            </Border>
+            <Label
+                Margin="0,20,0,10"
+                FontAttributes="Bold"
+                FontSize="14"
+                HorizontalOptions="StartAndExpand"
+                Text="Líquidos para envio" />
+            <CollectionView ItemsSource="{Binding LiquidosSelecionados}">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="1" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0,30,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackLayout>
+                                <Label
+                                    FontAttributes="Bold"
+                                    FontSize="16"
+                                    HorizontalOptions="StartAndExpand"
+                                    Text="{Binding Liquido.Nome}"
+                                    TextColor="Black" />
+                                <Label
+                                    Margin="0,10,0,0"
+                                    FontSize="14"
+                                    HorizontalOptions="StartAndExpand"
+                                    Text="Quantidade"
+                                    TextColor="Black" />
+                                <Border
+                                    Margin="0,10,0,0"
+                                    Padding="10,0,0,0"
+                                    HorizontalOptions="Start"
+                                    WidthRequest="55">
+                                    <Entry HeightRequest="40" Text="{Binding QtdAgendada, Mode=TwoWay}" />
+                                </Border>
+                            </StackLayout>
+                            <Image
+                                Grid.Column="1"
+                                Margin="0,0,20,0"
+                                HeightRequest="30"
+                                HorizontalOptions="EndAndExpand"
+                                Source="trashred.png"
+                                VerticalOptions="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <Button
+                BackgroundColor="Transparent"
+                Clicked="SelecionarLiquido"
+                FontSize="14"
+                HorizontalOptions="Start"
+                ImageSource="plusblue.png"
+                Text="Selecionar líquidos"
+                TextColor="#0B6EFE" />
+            <Label
+                Margin="0,20,0,10"
+                FontAttributes="Bold"
+                FontSize="14"
+                HorizontalOptions="StartAndExpand"
+                Text="Data e Hora" />
+            <Border
+                Margin="0,0,0,5"
+                Padding="15,5,5,5"
+                BackgroundColor="Transparent">
+                <Grid>
+                    <DatePicker
+                        x:Name="datePicker"
+                        Date="{Binding SelectedDate}"
+                        Format="D" />
+                    <Image
+                        Margin="0,0,10,0"
+                        HorizontalOptions="End"
+                        Source="arrowdown.png"
+                        VerticalOptions="Center" />
+                </Grid>
+            </Border>
+            <Border Padding="15,5,5,5" BackgroundColor="Transparent">
+                <Grid>
+                    <TimePicker x:Name="timePicker" Time="{Binding SelectedTime}" />
+                    <Image
+                        Margin="0,0,10,0"
+                        HorizontalOptions="End"
+                        Source="arrowdown.png"
+                        VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <Grid Margin="0,25,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button
+                    Grid.Column="0"
+                    BackgroundColor="Transparent"
+                    Clicked="OnCancelButtonClicked"
+                    FontSize="16"
+                    HorizontalOptions="Start"
+                    Text="Cancelar"
+                    TextColor="Black" />
+                <Button
+                    Grid.Column="1"
+                    BackgroundColor="Transparent"
+                    Clicked="OnSaveButtonClicked"
+                    FontSize="16"
+                    HorizontalOptions="End"
+                    Text="Confirmar"
+                    TextColor="#8F00FF" />
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+</toolkit:Popup>
