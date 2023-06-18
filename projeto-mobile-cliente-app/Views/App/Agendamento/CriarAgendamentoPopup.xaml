@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:toolkit="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui">
     <ScrollView BackgroundColor="White">
-        <VerticalStackLayout Padding="10,10,10,10">
+        <VerticalStackLayout Margin="0,0,0,10" Padding="20,20,20,20">
             <Label
                 x:Name="LabelTitle"
                 Margin="0,20,0,10"
@@ -21,7 +21,9 @@
             <Border Padding="15,5,5,5" BackgroundColor="Transparent">
                 <Grid>
                     <Picker
+                        x:Name="pickerPosto"
                         Title="Selecione o posto"
+                        IsEnabled="{Binding IsTransactionLocked}"
                         ItemDisplayBinding="{Binding Nome}"
                         ItemsSource="{Binding Postos}"
                         SelectedItem="{Binding SelectedPosto}" />
@@ -38,7 +40,7 @@
                 FontSize="14"
                 HorizontalOptions="StartAndExpand"
                 Text="Líquidos para envio" />
-            <CollectionView ItemsSource="{Binding LiquidosSelecionados}">
+            <CollectionView x:Name="CollectionLiquidos" ItemsSource="{Binding LiquidosSelecionados}">
                 <CollectionView.ItemsLayout>
                     <GridItemsLayout Orientation="Vertical" Span="1" />
                 </CollectionView.ItemsLayout>
@@ -67,16 +69,25 @@
                                     Padding="10,0,0,0"
                                     HorizontalOptions="Start"
                                     WidthRequest="55">
-                                    <Entry HeightRequest="40" Text="{Binding QtdAgendada, Mode=TwoWay}" />
+                                    <Entry
+                                        x:Name="EntryQtd"
+                                        HeightRequest="40"
+                                        IsEnabled="{Binding Path=BindingContext.IsTransactionLocked, Source={x:Reference CollectionLiquidos}}"
+                                        Text="{Binding QtdAgendada, Mode=TwoWay}" />
                                 </Border>
                             </StackLayout>
                             <Image
                                 Grid.Column="1"
                                 Margin="0,0,20,0"
-                                HeightRequest="30"
+                                HeightRequest="20"
                                 HorizontalOptions="EndAndExpand"
+                                IsVisible="{Binding Path=BindingContext.IsTransactionLocked, Source={x:Reference CollectionLiquidos}}"
                                 Source="trashred.png"
-                                VerticalOptions="Center" />
+                                VerticalOptions="Center">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer CommandParameter="{Binding}" Tapped="RemoverLiquidoSelecionado" />
+                                </Image.GestureRecognizers>
+                            </Image>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
@@ -87,6 +98,7 @@
                 FontSize="14"
                 HorizontalOptions="Start"
                 ImageSource="plusblue.png"
+                IsVisible="{Binding IsTransactionLocked}"
                 Text="Selecionar líquidos"
                 TextColor="#0B6EFE" />
             <Label
@@ -101,9 +113,9 @@
                 BackgroundColor="Transparent">
                 <Grid>
                     <DatePicker
-                        x:Name="datePicker"
                         Date="{Binding SelectedDate}"
-                        Format="D" />
+                        Format="D"
+                        IsEnabled="{Binding IsTransactionLocked}" />
                     <Image
                         Margin="0,0,10,0"
                         HorizontalOptions="End"
@@ -113,7 +125,7 @@
             </Border>
             <Border Padding="15,5,5,5" BackgroundColor="Transparent">
                 <Grid>
-                    <TimePicker x:Name="timePicker" Time="{Binding SelectedTime}" />
+                    <TimePicker IsEnabled="{Binding IsTransactionLocked}" Time="{Binding SelectedTime}" />
                     <Image
                         Margin="0,0,10,0"
                         HorizontalOptions="End"
@@ -122,7 +134,7 @@
                 </Grid>
             </Border>
 
-            <Grid Margin="0,25,0,0">
+            <Grid Margin="0,25,0,0" IsVisible="{Binding Path=IsTransactionLocked}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />

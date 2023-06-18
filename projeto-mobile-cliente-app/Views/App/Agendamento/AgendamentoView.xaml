@@ -11,6 +11,7 @@
             <converters:DataStringCriacao x:Key="DataStringCriacao" />
             <converters:ColorStatusBorderTransacao x:Key="ColorStatusBorderTransacao" />
             <converters:TextStatusAgendamento x:Key="TextStatusAgendamento" />
+            <converters:ExibirIconeCancelarAgendamento x:Key="ExibirIconeCancelarAgendamento" />
         </ResourceDictionary>
     </ContentPage.Resources>
     <ScrollView
@@ -135,8 +136,13 @@
                                         Margin="0,15,10,0"
                                         HeightRequest="18"
                                         HorizontalOptions="End"
+                                        IsVisible="{Binding ., Converter={StaticResource ExibirIconeCancelarAgendamento}}"
                                         Source="closewhite.png"
-                                        VerticalOptions="Start" />
+                                        VerticalOptions="Start">
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer CommandParameter="{Binding}" Tapped="CancelarAgendamento" />
+                                        </Image.GestureRecognizers>
+                                    </Image>
 
                                     <Label
                                         Grid.Column="2"
@@ -179,6 +185,9 @@
                                     TextColor="#686868"
                                     VerticalOptions="Center" />
                             </Grid>
+                            <StackLayout.GestureRecognizers>
+                                <TapGestureRecognizer CommandParameter="{Binding}" Tapped="AbrirAgendamento" />
+                            </StackLayout.GestureRecognizers>
                         </StackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

@@ -1,4 +1,6 @@
+using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Maui.Views;
+using Microsoft.Maui;
 using projeto_mobile_cliente_app.Dto;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -61,6 +63,19 @@ public partial class CriarAgendamentoPopup : Popup, INotifyPropertyChanged
         {
             _liquidosSelecionados = value;
             OnPropertyChanged();
+        }
+    }
+    private bool _isTransactionLocked = true;
+    public bool IsTransactionLocked
+    {
+        get { return _isTransactionLocked; }
+        set
+        {
+            if (_isTransactionLocked != value)
+            {
+                _isTransactionLocked = value;
+                OnPropertyChanged(nameof(IsTransactionLocked));
+            }
         }
     }
     public CriarAgendamentoPopup(TransacaoClienteDto transacaoCliente)
@@ -258,17 +273,33 @@ public partial class CriarAgendamentoPopup : Popup, INotifyPropertyChanged
             new LiquidoDto { Id = 5, Nome = "Liquido 5", ValorUnitario = 18.99 },
             new LiquidoDto { Id = 6, Nome = "Liquido 6", ValorUnitario = 18.99 }
         };
-        LabelTitle.Text = "Criar Líquido";
         TransacaoCliente = transacaoCliente;
         LiquidosSelecionados = new ObservableCollection<TransacaoItemDto>();
         if (TransacaoCliente != null)
         {
-            //LabelTitle.Text = "Editar Líquido";
+            LabelTitle.Text = "Editar Líquido";
+            LiquidosSelecionados = new ObservableCollection<TransacaoItemDto>(TransacaoCliente.TransacaoItem);
+            SelectedPosto = _listPosto.FirstOrDefault(x => x.Id == TransacaoCliente.Posto.Id);
+            SelectedDate = TransacaoCliente.dataAgendada.Date;
+            SelectedTime = TransacaoCliente.dataAgendada.TimeOfDay;
+            if (TransacaoCliente.Status != StatusEnum.Pendente)
+            {
+                IsTransactionLocked = false;
+            }
+
+            // Notificar a alteração das propriedades para atualizar a UI
+            OnPropertyChanged(nameof(SelectedDate));
+            OnPropertyChanged(nameof(SelectedTime));
+            
+
+
         }
         else
         {
-            //LabelTitle.Text = "Criar Líquido";
+            IsTransactionLocked = true;
+            LabelTitle.Text = "Criar Líquido";
         }
+        OnPropertyChanged(nameof(IsTransactionLocked));
         BindingContext = this;
     }
     //private void CriarLiquido(object sender, EventArgs e)
@@ -326,5 +357,12 @@ public partial class CriarAgendamentoPopup : Popup, INotifyPropertyChanged
         {
             Application.Current.MainPage.DisplayAlert("ID selecionado", $"O {LiquidosSelecionados[0].QtdAgendada} - {selectedDateTime}", "OK");
         }
+    }
+
+    private void RemoverLiquidoSelecionado(object sender, TappedEventArgs e)
+    {
+        var item = (TransacaoItemDto)e.Parameter;
+        LiquidosSelecionados.Remove(item);
+        _listLiquido.Where(x => x.Id == item.Liquido.Id).FirstOrDefault().IsSelected = false;
     }
 }

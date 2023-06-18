@@ -2,6 +2,7 @@ using CommunityToolkit.Maui.Views;
 using projeto_mobile_cliente_app.Dto;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace projeto_mobile_cliente_app.Views.App.Agendamento;
@@ -240,7 +241,7 @@ public partial class AgendamentoView : ContentPage, INotifyPropertyChanged
             {
                 Id = 1,
                 Status = StatusEnum.Pendente,
-                dataAgendada = DateTime.Now,
+                dataAgendada = DateTime.Now.AddDays(10),
                 CodigoTransacao = "TR1",
                 Posto = _originalListPosto[0], // Aqui estou utilizando o primeiro posto da lista de postos criada anteriormente
                 TransacaoItem = new List<TransacaoItemDto>
@@ -355,6 +356,29 @@ public partial class AgendamentoView : ContentPage, INotifyPropertyChanged
 
     private void AbrirAgendamento(object sender, TappedEventArgs e)
     {
+        var TransacaoCliente = (TransacaoClienteDto)e.Parameter;
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            var popupPage = new CriarAgendamentoPopup(TransacaoCliente);
+            popupPage.Size = new Size(350, 530);
+            await Application.Current.MainPage.ShowPopupAsync(popupPage);
+        });
+    }
 
+    private void CancelarAgendamento(object sender, TappedEventArgs e)
+    {
+        var TransacaoCliente = (TransacaoClienteDto)e.Parameter;
+        var Transacao = ListTransacao
+            .FirstOrDefault(x => x.Id == TransacaoCliente.Id);
+        Transacao.Status = StatusEnum.Cancelado;
+
+        // Cria uma nova lista a partir da lista atual
+        var updatedList = new ObservableCollection<TransacaoClienteDto>(ListTransacao);
+
+        // Atribui a nova lista à ListTransacao, disparando a notificação de alteração de propriedade
+        ListTransacao = updatedList;
+
+        OnPropertyChanged(nameof(ListTransacao));
+        Application.Current.MainPage.DisplayAlert("Sucesso", $"O Agendamento foi cancelado com sucesso", "OK");
     }
 }
