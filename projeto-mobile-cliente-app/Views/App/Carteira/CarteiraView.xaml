@@ -4,10 +4,89 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     NavigationPage.HasNavigationBar="False">
-    <VerticalStackLayout>
-        <Label
-            HorizontalOptions="Center"
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" />
-    </VerticalStackLayout>
+    <ScrollView
+        Padding="30"
+        BackgroundColor="White"
+        VerticalOptions="FillAndExpand">
+        <VerticalStackLayout>
+            <StackLayout
+                Margin="0,30,0,0"
+                HorizontalOptions="Start"
+                Orientation="Horizontal">
+                <Image
+                    Margin="0,0,10,0"
+                    HeightRequest="24"
+                    Source="walletgray.png"
+                    WidthRequest="24" />
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="22"
+                    Text="Carteira"
+                    VerticalOptions="Center" />
+            </StackLayout>
+            <Label
+                Margin="0,20,0,0"
+                FontAttributes="Bold"
+                FontSize="22"
+                Text="Meus pontos"
+                VerticalOptions="Center" />
+            <Label
+                x:Name="labelPontos"
+                Margin="0,20,0,0"
+                FontAttributes="Bold"
+                FontSize="40"
+                TextColor="#0B6EFE"
+                VerticalOptions="Center" />
+            <Label
+                Margin="0,20,0,0"
+                FontAttributes="Bold"
+                FontSize="18"
+                Text="Extrato"
+                VerticalOptions="Center" />
+
+            <CollectionView
+                x:Name="ClienteCollectionView"
+                Margin="0,15,0,0"
+                ItemsSource="{Binding ListTransacao}">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="1" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout Padding="5,5,5,5" Spacing="0">
+                            <HorizontalStackLayout Grid.Row="0">
+                                <Image
+                                    Grid.Row="0"
+                                    Margin="0,0,10,0"
+                                    HeightRequest="26"
+                                    HorizontalOptions="Start"
+                                    Source="calendarblack.png"
+                                    VerticalOptions="Center" />
+                                <Label FontSize="15" Text="{Binding CreatedAt, StringFormat='{0:dd/MM/yyyy HH:mm}'}" />
+                            </HorizontalStackLayout>
+                            <Grid Margin="0,20,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label
+                                    Grid.Column="0"
+                                    FontAttributes="Bold"
+                                    FontSize="15"
+                                    Text="{Binding Liquido.Nome}" />
+                                <Label
+                                    Grid.Column="1"
+                                    FontAttributes="Bold"
+                                    FontSize="15"
+                                    HorizontalOptions="End"
+                                    Text="{Binding Valor, StringFormat='+ {0} pnts'}"
+                                    TextColor="#0B6EFE" />
+                            </Grid>
+                            <BoxView BackgroundColor="#EFEFEF" HeightRequest="3" />
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

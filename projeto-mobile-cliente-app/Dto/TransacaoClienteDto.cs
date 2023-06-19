@@ -12,13 +12,16 @@ namespace projeto_mobile_cliente_app.Dto
         public PostoDto Posto { get; set; }
         public StatusEnum Status { get; set; }
         public DateTime dataAgendada { get; set; }
+        public double Valor { get; set; }
         public String CodigoTransacao { get; set; }
         public List<TransacaoItemDto> TransacaoItem { get; set; }
     }
     public class TransacaoItemDto
     {
         public int QtdAgendada { get; set; }
+        public double Valor { get; set; }
         public LiquidoDto Liquido { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 
 }

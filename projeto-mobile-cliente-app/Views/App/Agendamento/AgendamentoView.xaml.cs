@@ -249,6 +249,8 @@ public partial class AgendamentoView : ContentPage, INotifyPropertyChanged
                     new TransacaoItemDto
                     {
                         QtdAgendada = 10,
+                        Valor = 100.0,
+                        CreatedAt = DateTime.Now,
                         Liquido = _originalListPosto[0].LiquidosAceitos[0].Liquido // Aqui estou utilizando o primeiro liquido do primeiro posto da lista de postos criada anteriormente
                     }
                 }
@@ -266,6 +268,8 @@ public partial class AgendamentoView : ContentPage, INotifyPropertyChanged
                     new TransacaoItemDto
                     {
                         QtdAgendada = 20,
+                        Valor = 100.0,
+                        CreatedAt = DateTime.Now,
                         Liquido = _originalListPosto[1].LiquidosAceitos[0].Liquido // Aqui estou utilizando o primeiro liquido do segundo posto da lista de postos criada anteriormente
                     }
                 }
@@ -283,6 +287,8 @@ public partial class AgendamentoView : ContentPage, INotifyPropertyChanged
                     new TransacaoItemDto
                     {
                         QtdAgendada = 30,
+                        Valor = 100.0,
+                        CreatedAt = DateTime.Now,
                         Liquido = _originalListPosto[2].LiquidosAceitos[0].Liquido // Aqui estou utilizando o primeiro liquido do terceiro posto da lista de postos criada anteriormente
                     }
                 }
