@@ -140,7 +140,7 @@
                 x:Name="createUser"
                 Margin="10,60"
                 Padding="20"
-                BackgroundColor="#0B6EFE"
+                BackgroundColor="#8F00FF"
                 Clicked="SalvarUser"
                 FontAttributes="Bold"
                 FontSize="24"
