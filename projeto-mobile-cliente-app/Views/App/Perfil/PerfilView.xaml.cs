@@ -1,34 +1,30 @@
+using System.Text.Json;
+using CommunityToolkit.Maui.Views;
 using projeto_mobile_cliente_app.Dto;
+using projeto_mobile_cliente_app.Views.Account;
 
 namespace projeto_mobile_cliente_app.Views.App.Perfil;
 
 public partial class PerfilView : ContentPage
 {
-    private readonly ClienteDto _adm;
+    public ClienteDto _cliente;
     public PerfilView()
 	{
-		InitializeComponent();
-        _adm = new ClienteDto()
-        {
-            Id = 1,
-            Usuario = new UsuarioDto
-            {
-                Id = 1,
-                Nome = "Usuario Adm",
-                CPFouCNPJ = "12345678910",
-                Email = "usuario1@email.com",
-                PerfilEnum = PerfilEnum.Cliente,
-                CEP = "12345678",
-                Rua = "Rua A",
-                Numero = 1,
-                UF = "UF",
-                Cidade = "Cidade",
-                StatusEnum = StatusEnum.Bloqueado,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
-            }
-        };
-        lblNome.Text = _adm.Usuario.Nome;
+        InitializeComponent();
+        LoadDataAsync();
+    }
+    private async Task LoadDataAsync()
+    {
+        string jsonString = Preferences.Get("usuarioLogado", string.Empty);
+        _cliente = JsonSerializer.Deserialize<ClienteDto>(jsonString);
+        lblNome.Text = _cliente.Usuario.Nome;
+    }
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        // Chama a função para carregar os dados
+        LoadDataAsync();
     }
     private void EditarPerfil(object sender, EventArgs e)
     {
@@ -39,11 +35,17 @@ public partial class PerfilView : ContentPage
         bool answer = await DisplayAlert("Confirmação", "Tem certeza que desja redefinir sua senha?", "Confirmar", "Cancelar");
         if (answer)
         {
-            Navigation.PushModalAsync(new RedefinirSenha(_adm));
+            Navigation.PushModalAsync(new RedefinirSenha(_cliente));
         }
     }
     private void SairConta(object sender, EventArgs e)
     {
+        var popup = new SpinnerPopup();
+        this.ShowPopup(popup);
 
+        Preferences.Remove("usuarioLogado");
+        Application.Current.MainPage = new NavigationPage(new LoginView());
+
+        popup.Close();
     }
 }

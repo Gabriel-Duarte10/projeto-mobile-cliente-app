@@ -1,13 +1,29 @@
-﻿using projeto_mobile_cliente_app.Views.Account;
+﻿using projeto_mobile_cliente_app.Services;
+using projeto_mobile_cliente_app.Views.Account;
+using projeto_mobile_cliente_app.Views.App;
 
 namespace projeto_mobile_cliente_app;
 
 public partial class App : Application
 {
-	public App(LoginView loginView)
+    public static event Action<string> PasswordResetLinkReceived;
+    public App(LoginView loginView)
 	{
 		InitializeComponent();
-
-        MainPage = new NavigationPage(loginView);
+        string jsonString = Preferences.Get("usuarioLogado", string.Empty);
+        if (string.IsNullOrEmpty(jsonString))
+        {
+            MainPage = new NavigationPage(loginView);
+        }
+        else
+        {
+            MainPage = new NavigationPage(new AppView());
+        }
+        NavigationService.Instance.Initialize(MainPage.Navigation);
+    }
+    public static void OnPasswordResetLinkReceived(string token)
+    {
+        PasswordResetLinkReceived?.Invoke(token);
+        NavigationService.Instance.NavigateToPasswordResetPage(token);
     }
 }

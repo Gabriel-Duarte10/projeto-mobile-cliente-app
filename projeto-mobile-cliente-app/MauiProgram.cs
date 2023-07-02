@@ -30,6 +30,7 @@ public static class MauiProgram
     {
         mauiAppBuilder.Services.AddTransient<LoginView>();
         mauiAppBuilder.Services.AddTransient<AppView>();
+        mauiAppBuilder.Services.AddTransient<PasswordResetPage>();
 
         return mauiAppBuilder;
     }
