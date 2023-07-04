@@ -17,6 +17,13 @@ namespace projeto_mobile_cliente_app.Dto
         public string Cidade { get; set; }
         public List<PostoAceitaLiquidoDto> LiquidosAceitos { get; set; }
         public DonoPostoDto DonoPosto { get; set; }
+        public string Descricao
+        {
+            get
+            {
+                return $"{Nome} - {Rua} - {Numero} - {UF}";
+            }
+        }
     }
     public class DonoPostoDto
     {

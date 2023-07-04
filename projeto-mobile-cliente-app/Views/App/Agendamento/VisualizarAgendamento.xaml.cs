@@ -39,7 +39,8 @@ public partial class VisualizarAgendamento : Popup, INotifyPropertyChanged
         LiquidosSelecionados = new ObservableCollection<TransacaoItemDto>(TransacaoCliente.TransacaoItem);
         LabelData.Text = "  " + TransacaoCliente.dataAgendada.ToString("dd/MM/yyyy HH:mm");
         LabelPostoNome.Text = TransacaoCliente.Posto.Nome;
-        LabelEnderecoPosto.Text = TransacaoCliente.Posto.Rua + ", " +
+        LabelEnderecoPosto.Text = TransacaoCliente.Posto.Rua + ", " + 
+                TransacaoCliente.Posto.Numero + ", " +
                 TransacaoCliente.Posto.Cidade + ", " +
                 TransacaoCliente.Posto.UF;
         LabelAgendamentoCodigo.Text = "Codigo: " + TransacaoCliente.CodigoTransacao;
@@ -49,14 +50,32 @@ public partial class VisualizarAgendamento : Popup, INotifyPropertyChanged
         }
         OnPropertyChanged(nameof(IsTransactionLocked));
         BindingContext = this;
-    }
+        MessagingCenter.Subscribe<Application>(Application.Current, "VisualizarAsync", (sender) =>
+        {
+            try
+            {
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                // Coloque um breakpoint aqui e inspecione a exceção
+                Console.WriteLine(ex);
+            }
+        });
 
+    }
+    // Onde quer que você esteja fechando o popup
+    private async void ClosePopup()
+    {
+        MessagingCenter.Unsubscribe<Application>(Application.Current, "VisualizarAsync");
+        await Application.Current.MainPage.Navigation.PopModalAsync();
+    }
     private void EditarAgendamento(object sender, TappedEventArgs e)
     {
         MainThread.BeginInvokeOnMainThread(async () =>
         {
             var popupPage = new CriarAgendamentoPopup(TransacaoCliente);
-            popupPage.Size = new Size(350, 530);
+            popupPage.Size = new Size(350, 580);     
             await Application.Current.MainPage.ShowPopupAsync(popupPage);
         });
     }

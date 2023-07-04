@@ -18,13 +18,14 @@
                 FontSize="14"
                 HorizontalOptions="StartAndExpand"
                 Text="Posto" />
-            <Border Padding="15,5,5,5" BackgroundColor="Transparent">
+            <Border Padding="15,5,15,5" BackgroundColor="Transparent">
                 <Grid>
                     <Picker
                         x:Name="pickerPosto"
                         Title="Selecione o posto"
+                        FontSize="12"
                         IsEnabled="{Binding IsTransactionLocked}"
-                        ItemDisplayBinding="{Binding Nome}"
+                        ItemDisplayBinding="{Binding Descricao}"
                         ItemsSource="{Binding Postos}"
                         SelectedItem="{Binding SelectedPosto}" />
                     <Image

@@ -195,12 +195,20 @@
 
 
             <Label
+                x:Name="LabelNaoExisteAgendamentos"
                 FontSize="16"
                 HorizontalOptions="Center"
-                IsVisible="{Binding ListTransacao, Converter={StaticResource EqualityToBooleanConverter}}"
+                IsVisible="False"
                 Text="Não existe agendamentos"
                 TextColor="Black"
                 VerticalOptions="Center" />
+            <ActivityIndicator
+                x:Name="LoadingIndicator"
+                Margin="0,30,0,0"
+                HorizontalOptions="CenterAndExpand"
+                IsRunning="True"
+                IsVisible="True"
+                VerticalOptions="CenterAndExpand" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
